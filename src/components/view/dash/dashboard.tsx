@@ -12,6 +12,7 @@ import { useToast } from "@/lib/hooks/use-toast";
 
 export const Dashboard = () => {
   const [funcionarios, setFuncionarios] = useState<IUser[]>([]);
+  const [notAllowed, setNotAllowed] = useState(false)
   const [date, setDate] = useState<string>("");
 
   const { toast } = useToast();
@@ -20,8 +21,13 @@ export const Dashboard = () => {
     const getFuncionarios = async () => {
       get("/funcionarios")
         .then(async (res: Response) => {
-          const data = await res.json();
 
+          if (!res.ok) {
+            setNotAllowed(true);
+            return;
+          }
+
+          const data = await res.json();
           setFuncionarios(data.funcionarios);
         })
         .catch((err) => {
@@ -70,6 +76,7 @@ export const Dashboard = () => {
         data={funcionarios}
         setFuncionarios={setFuncionarios}
         deleteFuncionario={deleteFuncionario}
+        notAllowed={notAllowed}
       />
     </div>
   );

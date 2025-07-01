@@ -4,43 +4,52 @@ import { useEffect, useState } from "react";
 
 import Sidebar from "@/components/ui/navs/sidebar";
 import { TabsContent } from "@/components/ui/tabs";
-import { TabSelector } from "@/components/view/relatorio/tabSelector";
+import { TabSelectorRelatorio } from "@/components/view/relatorio/tabSelectorRelatorio";
 import RelatorioForm from "@/components/view/relatorio/relatorioForm";
 import { RelatoriosTable } from "@/components/view/relatorio/relatoriosTable";
 
 import { get } from "@/lib/helpers/fetch.helper";
+import { RelatoriosPendentesTable } from "@/components/view/relatorio/relatoriosPendentesTable";
+import { Separator } from "@/components/ui/separator";
+import { LockKeyhole } from "lucide-react";
+import { RelatoriosAdmin } from "@/components/view/relatorio/relatoriosAdmin";
 
 export default function PageRelatorios() {
   const [meusRelatorios, setMeusRelatorios] = useState([]);
 
+
   useEffect(() => {
-    const getRelatorios = async () => {
+    const getMeusRelatorios = async () => {
       get("/relatorios/meus-relatorios")
         .then(async (res: Response) => {
           const data = await res.json();
 
-          console.log(data.relatorios);
           setMeusRelatorios(data.relatorios);
         })
         .catch((err) => {
           console.error(err);
         });
     };
-    getRelatorios();
+
+    getMeusRelatorios();
   }, []);
 
   return (
-    <div className="relative flex flex-row w-screen h-screen">
+    <div className="relative flex flex-row w-screen h-screen ">
       <Sidebar />
-      <div className="gap-2 p-5 w-full">
-        <TabSelector>
+      <div className="gap-2 p-5 w-full max-h-screen overflow-y-scroll">
+        <TabSelectorRelatorio>
           <TabsContent value="listar">
             <RelatoriosTable data={meusRelatorios} />
+
+            <Separator className="my-4" />
+
+            <RelatoriosAdmin />
           </TabsContent>
           <TabsContent value="enviar">
             <RelatorioForm />
           </TabsContent>
-        </TabSelector>
+        </TabSelectorRelatorio>
       </div>
     </div>
   );

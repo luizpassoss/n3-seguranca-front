@@ -42,6 +42,22 @@ export function postForm(endpoint: string, body: FormData | undefined) {
   });
 }
 
+export function put(
+  endpoint: string,
+  body: Record<string, unknown> | undefined
+) {
+  const token = clientCookie().get("token");
+
+  return fetch(API_URL + endpoint, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  });
+}
+
 export function delet(endpoint: string) {
   const token = clientCookie().get("token");
 

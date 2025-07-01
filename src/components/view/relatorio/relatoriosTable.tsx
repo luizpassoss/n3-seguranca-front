@@ -183,9 +183,9 @@ export function RelatoriosTable({ data }: RelatoriosTableProps) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}
@@ -193,8 +193,8 @@ export function RelatoriosTable({ data }: RelatoriosTableProps) {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
+            {(table?.getRowModel?.()?.rows?.length ?? 0) > 0 ? (
+              table?.getRowModel?.()?.rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
@@ -211,10 +211,7 @@ export function RelatoriosTable({ data }: RelatoriosTableProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   Sem resultados.
                 </TableCell>
               </TableRow>

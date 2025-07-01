@@ -42,113 +42,115 @@ import { IUser } from "@/lib/global.types";
 export const createColumns = (
   onDelete: (id: string) => void
 ): ColumnDef<IUser>[] => [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="checkbox"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="linha"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "nome",
-    header: "Nome",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("nome")}</div>,
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="outline"
-          className="bg-white text-black"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown size={15} />
-        </Button>
-      );
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="checkbox"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="linha"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    id: "cargo",
-    accessorKey: "cargo",
-    header: () => <div className="text-black">Cargo</div>,
-    cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue("cargo")}</div>;
+    {
+      accessorKey: "nome",
+      header: "Nome",
+      cell: ({ row }) => <div className="capitalize">{row.getValue("nome")}</div>,
     },
-  },
-  {
-    id: "Criado em",
-    accessorKey: "createdAt",
-    header: () => <div className="text-black">Criado Em</div>,
-    cell: ({ row }) => {
-      return (
-        <div className="text-black font-medium">
-          {new Date(row.getValue("Criado em")).toLocaleString("pt-BR")}
-        </div>
-      );
+    {
+      accessorKey: "email",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="outline"
+            className="bg-white text-black"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Email
+            <ArrowUpDown size={15} />
+          </Button>
+        );
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
     },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row, table }) => {
-      const user = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">abrir opcoes</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-
-            {/* EDITAR  */}
-            <EditUserDialog
-              user={user}
-              onUpdated={(u) => table.options.meta?.updateRow?.(u)}
-            />
-
-            {/* DELETAR */}
-            <DropdownMenuItem onClick={() => onDelete(user._id)}>
-              <Trash /> Deletar
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+    {
+      id: "cargo",
+      accessorKey: "cargo",
+      header: () => <div className="text-black">Cargo</div>,
+      cell: ({ row }) => {
+        return <div className="capitalize">{row.getValue("cargo")}</div>;
+      },
     },
-  },
-];
+    {
+      id: "Criado em",
+      accessorKey: "createdAt",
+      header: () => <div className="text-black">Criado Em</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="text-black font-medium">
+            {new Date(row.getValue("Criado em")).toLocaleString("pt-BR")}
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row, table }) => {
+        const user = row.original;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">abrir opcoes</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Ações</DropdownMenuLabel>
+
+              {/* EDITAR  */}
+              <EditUserDialog
+                user={user}
+                onUpdated={(u) => table.options.meta?.updateRow?.(u)}
+              />
+
+              {/* DELETAR */}
+              <DropdownMenuItem onClick={() => onDelete(user._id)}>
+                <Trash /> Deletar
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
 
 interface DashboardTableProps {
   data: IUser[];
   deleteFuncionario: (id: string) => Promise<void>;
   setFuncionarios: Dispatch<SetStateAction<IUser[]>>;
+  notAllowed: boolean
 }
 export function DashboardTable({
   data,
   deleteFuncionario,
   setFuncionarios,
+  notAllowed
 }: DashboardTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -236,9 +238,9 @@ export function DashboardTable({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}
@@ -268,7 +270,7 @@ export function DashboardTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Sem resultados.
+                  {notAllowed ? ("Não autorizado, entre como gerente ou diretor") : ("Sem resultados.")}
                 </TableCell>
               </TableRow>
             )}

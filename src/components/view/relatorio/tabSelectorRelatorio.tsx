@@ -7,7 +7,7 @@ interface TabsProps {
   children: ReactNode;
 }
 
-export const TabSelector = ({ children }: TabsProps) => {
+export const TabSelectorRelatorio = ({ children }: TabsProps) => {
   return (
     <div className="flex w-full flex-col gap-6">
       <Tabs defaultValue="listar">
